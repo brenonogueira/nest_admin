@@ -10,7 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
     PrismaModule,
     UserModule,
     JwtModule.register({
-      secret: 'secret',
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },
     }),
   ],
