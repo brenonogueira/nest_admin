@@ -2,8 +2,10 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   NotFoundException,
   Post,
+  Req,
   Res,
 } from '@nestjs/common';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
@@ -11,8 +13,7 @@ import { UserService } from 'src/user/user.service';
 import { AuthService } from './auth.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { Response } from 'express';
-
+import { Response, Request } from 'express';
 @Controller()
 export class AuthController {
   constructor(
@@ -56,6 +57,27 @@ export class AuthController {
       httpOnly: true,
     });
 
+    delete user.password;
     return user;
+  }
+
+  @Get('user')
+  async user(@Req() request: Request) {
+    // Get JWT from cookie
+    const cookie = request.cookies['jwt'];
+
+    //Get data from cookie
+    const data = await this.jwtService.verifyAsync(cookie);
+
+    return this.userService.findOneById(data.id);
+  }
+
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) response: Response) {
+    response.clearCookie('jwt');
+
+    return {
+      message: 'Logged out',
+    };
   }
 }

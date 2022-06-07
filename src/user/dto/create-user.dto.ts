@@ -20,5 +20,5 @@ export class CreateUserDto extends User {
   password: string;
 
   @IsNotEmpty()
-  password_confirmation: string;
+  password_confirmation: string | null;
 }

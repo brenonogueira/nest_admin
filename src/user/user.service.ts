@@ -38,6 +38,18 @@ export class UserService {
     });
   }
 
+  async findOneById(id: number): Promise<User> {
+    const user = await this.prisma.users.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    delete user.password;
+
+    return user;
+  }
+
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
