@@ -22,8 +22,14 @@ export class UserService {
       ...body,
       password: hashed,
     };
-
-    return await this.prisma.users.create({ data });
+    try {
+      return await this.prisma.users.create({ data });
+    } catch (error) {
+      if (error.meta.target[0] === 'email') {
+        throw new BadRequestException('Email já cadastrado');
+      }
+      // return error.meta.target;
+    }
   }
 
   async findAll(): Promise<User[]> {
