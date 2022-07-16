@@ -23,7 +23,11 @@ export class UserService {
       password: hashed,
     };
     try {
-      return await this.prisma.users.create({ data });
+      const usersCreate = await this.prisma.users.create({ data });
+
+      delete usersCreate.password;
+
+      return usersCreate;
     } catch (error) {
       if (error.meta.target[0] === 'email') {
         throw new BadRequestException('Email já cadastrado');
@@ -34,6 +38,32 @@ export class UserService {
 
   async findAll(): Promise<User[]> {
     return await this.prisma.users.findMany();
+  }
+
+  async paginate(page = 1): Promise<any> {
+    const take = 1;
+
+    const data = await this.prisma.users.findMany({
+      take: take,
+      skip: (page - 1) * take,
+      select: {
+        id: true,
+        email: true,
+        first_name: true,
+        last_name: true,
+      },
+    });
+
+    const total = await this.prisma.users.count();
+
+    return {
+      data,
+      meta: {
+        total: total,
+        page: +page,
+        last_page: Math.ceil(total / take),
+      },
+    };
   }
 
   async findOne(email: string): Promise<User> {
@@ -56,11 +86,24 @@ export class UserService {
     return user;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    await this.prisma.users.update({
+      where: {
+        id: id,
+      },
+      data: {
+        ...updateUserDto,
+      },
+    });
+
+    return this.findOneById(id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    return await this.prisma.users.delete({
+      where: {
+        id,
+      },
+    });
   }
 }

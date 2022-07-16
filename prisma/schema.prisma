@@ -16,3 +16,8 @@ model Users {
   first_name  String?
   last_name  String?
 }
+
+model Roles {
+   id    Int     @id @default(autoincrement())
+   name String
+}
