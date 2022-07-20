@@ -30,10 +30,10 @@ export class UserController {
     return await this.userService.paginate(page);
   }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.userService.findOne(+id);
-  // }
+  @Get(':id')
+  findOne(@Param('id') id: number) {
+    return this.userService.findOneById(+id);
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
@@ -43,5 +43,10 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);
+  }
+
+  @Post('roles')
+  addUserRoles(@Body() body: any) {
+    return this.userService.addRole(body);
   }
 }

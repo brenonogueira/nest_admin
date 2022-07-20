@@ -16,8 +16,11 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Post()
-  create(@Body() createRoleDto: CreateRoleDto) {
-    return this.roleService.create(createRoleDto);
+  create(@Body() createRoleDto: CreateRoleDto, @Body() ids: number[]) {
+    return this.roleService.create(
+      createRoleDto,
+      ids.map((id) => ({ id })),
+    );
   }
 
   @Get()

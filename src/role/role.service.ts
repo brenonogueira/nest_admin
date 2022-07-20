@@ -8,9 +8,14 @@ import { Role } from './entities/role.entity';
 export class RoleService {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(data: CreateRoleDto) {
+  create(data: CreateRoleDto, permissions) {
     return this.prisma.roles.create({
-      data: data,
+      data: {
+        name: data.name,
+        role_permissions: {
+          create: [{ permission_id: permissions }],
+        },
+      },
     });
   }
 
