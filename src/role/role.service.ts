@@ -9,11 +9,12 @@ export class RoleService {
   constructor(private readonly prisma: PrismaService) {}
 
   create(data: CreateRoleDto, permissions) {
+    console.log(permissions);
     return this.prisma.roles.create({
       data: {
         name: data.name,
         role_permissions: {
-          create: [{ permission_id: permissions }],
+          create: permissions,
         },
       },
     });
@@ -27,6 +28,17 @@ export class RoleService {
     return this.prisma.roles.findUnique({
       where: {
         id: id,
+      },
+      include: {
+        role_permissions: {
+          select: {
+            permissions: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
   }

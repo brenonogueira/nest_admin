@@ -16,10 +16,13 @@ export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
   @Post()
-  create(@Body() createRoleDto: CreateRoleDto, @Body() ids: number[]) {
+  create(
+    @Body() createRoleDto: CreateRoleDto,
+    @Body('permissions') ids: number[],
+  ) {
     return this.roleService.create(
       createRoleDto,
-      ids.map((id) => ({ id })),
+      ids.map((id) => ({ permission_id: id })),
     );
   }
 
